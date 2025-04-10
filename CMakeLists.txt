@@ -7,12 +7,20 @@ project(PlantsVsZombies)
 
 set(TARGET run)
 
-file(GLOB_RECURSE SOURCE "src/*.cpp")
-file(GLOB_RECURSE HEADERS "src/*.hpp")
+file(GLOB_RECURSE SOURCES "source/*.cpp")
+file(GLOB_RECURSE HEADERS "source/*.hpp")
 
-add_executable(${TARGET} ${SOURCE} ${HEADERS})
+find_program(CLANG_TIDY_EXE NAMES "clang-tidy")
+if(CLANG_TIDY_EXE)
+    set(CMAKE_CXX_CLANG_TIDY
+            "${CLANG_TIDY_EXE}"
+            "--config-file=${CMAKE_SOURCE_DIR}/.clang-tidy"  # Использует настройки из файла
+    )
+endif()
 
-include_directories(src)
+add_executable(${TARGET} ${SOURCES} ${HEADERS})
+
+include_directories(source)
 
 find_package(SFML 3 REQUIRED COMPONENTS Graphics Audio Network)
 
